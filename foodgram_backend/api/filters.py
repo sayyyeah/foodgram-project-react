@@ -28,7 +28,7 @@ class RecipeFilter(django_filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author')
+        fields = ('is_favorited', 'is_in_shopping_cart', 'tags', 'author')
 
     def get_is_favorited(self, queryset, name, value):
         if self.request.user.is_authenticated and value:
