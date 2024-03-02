@@ -46,19 +46,19 @@ jobs:
       with:
         context: ./foodgram_backend/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend
+        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
     - name: Push to Docker Hub frontend
       uses: docker/build-push-action@v3
       with:
         context: ./frontend/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend
+        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
     - name: Push to Docker Hub gateway
       uses: docker/build-push-action@v3
       with:
         context: ./infra/
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway
+        tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_gateway:latest
 
   deploy:
     runs-on: ubuntu-latest
