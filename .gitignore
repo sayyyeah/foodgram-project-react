@@ -36,6 +36,8 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+install_linter.txt
+req.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -130,3 +132,12 @@ dmypy.json
 
 # .idea
 .idea
+
+# vscode
+.vscode/
+
+# папки со статикой и медиа
+foodgram_backend/backend_media/
+
+# Фикстуры
+foodgram_backend/db.json
