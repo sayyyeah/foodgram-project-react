@@ -6,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.db.models import Sum
+from api.pagination import LimitedPagePagination
 
 from recipes.models import (
     Favorite,
@@ -112,20 +112,23 @@ class RecipeViewset(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = RecipeIngredient.objects.filter(
             recipe__shopping__user=request.user
-        ).values(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(ingredient_amount=Sum('amount'))
-        cart_list = ['Список покупок:\n']
+        )
+        shopping_data = {}
         for ingredient in ingredients:
-            ingredient_name = ingredient['ingredient__name']
-            measurement_unit = ingredient['ingredient__measurement_unit']
-            amount = ingredient['ingredient_amount']
-            cart_list.append(
-                f'\n{ingredient_name} - {amount}, {measurement_unit}'
-            )
-        response = HttpResponse(cart_list, content_type='text/plain')
-        response['Content-Disposition'] = \
-            'attachment; filename="shopping_cart.txt"'
+            if str(ingredient.ingredient) in shopping_data:
+                shopping_data[
+                    f'{str(ingredient.ingredient)}'] += ingredient.amount
+            else:
+                shopping_data[
+                    f'{str(ingredient.ingredient)}'] = ingredient.amount
+        filename = "shopping-list.txt"
+        content = ''
+        for ingredient, amount in shopping_data.items():
+            content += f"{ingredient} - {amount};\n"
+        response = HttpResponse(content, content_type='text/plain',
+                                status=status.HTTP_200_OK)
+        response['Content-Disposition'] = 'attachment; filename={0}'.format(
+            filename)
         return response
 
 
@@ -133,9 +136,10 @@ class UserSubscriptionList(ListViewSet):
 
     serializer_class = SubscribeSerializer
     permission_classes = (IsAuthenticated,)
+    paginatoin_class = LimitedPagePagination
 
     def get_queryset(self):
-        return Subscribe.objects.filter(user=self.request.user)
+        return Subscribe.objects.filter(user=self.request.user)[:3]
 
 
 class UserSubscribeView(APIView):

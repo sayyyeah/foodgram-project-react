@@ -11,11 +11,20 @@ class IngredientAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class IngredientRecipeInline(admin.TabularInline):
+    model = Recipe.ingredients.through
+    extra = 1
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'author', 'pub_date',)
-    list_filter = ('author__username', 'name', 'tags',)
-    search_fields = ('author__username', 'name', 'tags__name',)
+    list_display = ('name', 'author', 'recipe_in_favorites_count')
+    list_filter = ('name', 'author__username', 'tags__name')
+    search_fields = ('name',)
+    inlines = (IngredientRecipeInline,)
+
+    def recipe_in_favorites_count(self, recipe):
+        return Favorite.objects.filter(favorite_recipe=recipe).count()
 
 
 @admin.register(Tag)

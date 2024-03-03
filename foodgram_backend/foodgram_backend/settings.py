@@ -66,10 +66,10 @@ AUTH_USER_MODEL = 'users.User'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': os.getenv('POSTGRES_DB', 'django'),
+        'NAME': os.getenv('POSTGRES_DB', 'foodgram_db'),
         'USER': os.getenv('POSTGRES_USER', 'django'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', '12312'),
-        'HOST': os.getenv('DB_HOST', 'django'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'foodgram_db'),
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
@@ -105,6 +105,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# STATIC_URL = '/backend_static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'backend_static')
+
+# MEDIA_URL = '/backend_media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'backend_media')
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
