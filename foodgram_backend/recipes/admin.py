@@ -13,7 +13,8 @@ class IngredientAdmin(admin.ModelAdmin):
 
 class IngredientRecipeInline(admin.TabularInline):
     model = Recipe.ingredients.through
-    extra = 1
+    extra = 0
+    min_num = 1
 
 
 @admin.register(Recipe)
@@ -24,7 +25,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (IngredientRecipeInline,)
 
     def recipe_in_favorites_count(self, recipe):
-        return Favorite.objects.filter(favorite_recipe=recipe).count()
+        return Favorite.objects.filter(recipe=recipe).count()
 
 
 @admin.register(Tag)
