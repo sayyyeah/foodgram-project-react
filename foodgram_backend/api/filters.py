@@ -1,11 +1,8 @@
 from rest_framework.filters import SearchFilter
 import django_filters
 from django_filters.rest_framework import filters
-from django.contrib.auth import get_user_model
 
 from recipes.models import Recipe, Tag
-
-User = get_user_model()
 
 
 class IngredientFilter(SearchFilter):
@@ -24,7 +21,6 @@ class RecipeFilter(django_filters.FilterSet):
     is_in_shopping_cart = filters.BooleanFilter(
         method="get_is_in_shopping_cart"
     )
-    author = django_filters.ModelChoiceFilter(queryset=User.objects.all())
 
     class Meta:
         model = Recipe

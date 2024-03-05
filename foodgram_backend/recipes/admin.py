@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import (Favorite, Subscribe, Ingredient, Recipe,
-                     ShoppingCart, Tag)
+from .models import (Favorites, Subscribe, Ingredient, Recipe,
+                     Shopping, Tag)
 
 
 @admin.register(Ingredient)
@@ -19,13 +19,28 @@ class IngredientRecipeInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author', 'recipe_in_favorites_count')
+    list_display = ('name',
+                    'author',
+                    'recipe_in_favorites_count',
+                    'ingradients_in_recipes')
     list_filter = ('name', 'author__username', 'tags__name')
     search_fields = ('name',)
     inlines = (IngredientRecipeInline,)
 
     def recipe_in_favorites_count(self, recipe):
-        return Favorite.objects.filter(recipe=recipe).count()
+        return recipe.favorites.count()
+
+    def ingradients_in_recipes(self, obj):
+        return ',\n '.join([
+            f'{item["ingredient__name"]} - {item["amount"]}'
+            f' {item["ingredient__measurement_unit"]}.'
+            for item in obj.ingredient.values(
+                'ingredient__name',
+                'amount', 'ingredient__measurement_unit')])
+# list(ingredients_list.values('ingredient__name', 'amount'))
+
+    recipe_in_favorites_count.short_description = 'Количество добавлений'
+    ' в избранное'
 
 
 @admin.register(Tag)
@@ -45,7 +60,7 @@ class SubscribeAdmin(admin.ModelAdmin):
                 f'подписан на {str(obj.author).capitalize()}.')
 
 
-@admin.register(Favorite)
+@admin.register(Favorites)
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_favorites',)
     search_fields = ('recipe__name', 'user__username',)
@@ -54,7 +69,7 @@ class FavoriteAdmin(admin.ModelAdmin):
         return f'"{obj.recipe}" добавлен пользователем {obj.user}.'
 
 
-@admin.register(ShoppingCart)
+@admin.register(Shopping)
 class ShoppingAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_shopping',)
     list_filter = ('recipe',)
