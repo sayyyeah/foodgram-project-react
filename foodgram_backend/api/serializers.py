@@ -1,4 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from recipes.models import (RecipeIngredient,
@@ -11,7 +12,7 @@ from users.models import User
 from users import quantity as q
 
 
-class UserGetSerializer(serializers.ModelSerializer):
+class UserGetSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -68,7 +69,7 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
 
 class RecipeListSerializer(serializers.ModelSerializer):
 
-    author = UserGetSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientsSerializer(
         many=True,
         source='ingredient'
@@ -120,7 +121,7 @@ class CreateIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
 
-    author = UserGetSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     image = Base64ImageField(allow_empty_file=False, allow_null=False)
     ingredients = CreateIngredientSerializer(many=True)
 
